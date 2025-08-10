@@ -37,6 +37,9 @@ if RENDER_EXTERNAL_HOSTNAME:
 # Add localhost for development
 if DEBUG:
     ALLOWED_HOSTS.extend(['localhost', '127.0.0.1', '192.168.0.12', '0.0.0.0'])
+else:
+    # Production settings for Render
+    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1', '0.0.0.0'])
 
 
 # Application definition
@@ -89,8 +92,9 @@ WSGI_APPLICATION = 'todo_list.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         # Replace this value with your local database's connection string.
-        default='postgresql://postgres:postgres@localhost:5432/todo_list',
-        conn_max_age=600
+        default='sqlite:///db.sqlite3' if DEBUG else 'postgresql://postgres:postgres@localhost:5432/todo_list',
+        conn_max_age=600,
+        conn_health_checks=True,
     )
 }
 

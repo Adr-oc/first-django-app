@@ -1,0 +1,21 @@
+databases:
+  - name: todo-list-db
+    databaseName: todo_list
+    user: todo_list_user
+
+services:
+  - type: web
+    name: todo-list-app
+    runtime: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn todo_list.wsgi:application --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.3
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: todo-list-db
+          property: connectionString
