@@ -1,0 +1,2 @@
+# first-django-app
+My first Django app
