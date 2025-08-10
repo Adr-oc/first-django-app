@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TodoList - Organiza tu vida de manera simple</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-primary">📝 TodoList</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="{% url 'login' %}" class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">Iniciar Sesión</a>
+                    <a href="{% url 'register' %}" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200">Registrarse</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="relative bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                    Organiza tu vida de manera
+                    <span class="text-yellow-300">simple</span>
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 text-blue-100">
+                    La aplicación de tareas más intuitiva y fácil de usar. 
+                    Mantén el control de tus objetivos diarios.
+                </p>
+                <div class="space-x-4">
+                    <a href="{% url 'register' %}" class="bg-white text-primary px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors duration-200 inline-block">
+                        Comenzar Gratis
+                    </a>
+                    <a href="#features" class="border-2 border-white text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-white hover:text-primary transition-colors duration-200 inline-block">
+                        Ver Características
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div id="features" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Características que te encantarán
+                </h2>
+                <p class="text-xl text-gray-600">
+                    Todo lo que necesitas para mantener tus tareas organizadas
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="text-center p-6">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Agregar Tareas Fácilmente</h3>
+                    <p class="text-gray-600">Crea nuevas tareas con solo un clic. Interfaz intuitiva que te permite agregar tareas en segundos.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="text-center p-6">
+                    <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Marcar como Completadas</h3>
+                    <p class="text-gray-600">Marca tus tareas como completadas con un simple clic. Visualiza tu progreso de manera clara.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="text-center p-6">
+                    <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Estadísticas en Tiempo Real</h3>
+                    <p class="text-gray-600">Ve cuántas tareas has completado y cuántas tienes pendientes. Mantén el control de tu productividad.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How it works -->
+    <div class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    ¿Cómo funciona?
+                </h2>
+                <p class="text-xl text-gray-600">
+                    Tres pasos simples para organizar tu vida
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">1</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Regístrate</h3>
+                    <p class="text-gray-600">Crea tu cuenta gratuita en menos de un minuto</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">2</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Agrega Tareas</h3>
+                    <p class="text-gray-600">Escribe tus tareas y objetivos diarios</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">3</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Organiza</h3>
+                    <p class="text-gray-600">Marca como completadas y mantén el control</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="bg-primary text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                ¿Listo para organizar tu vida?
+            </h2>
+            <p class="text-xl mb-8 text-blue-100">
+                Únete a miles de usuarios que ya están organizando sus tareas de manera eficiente
+            </p>
+            <a href="{% url 'register' %}" class="bg-white text-primary px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors duration-200 inline-block">
+                Comenzar Ahora - Es Gratis
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h3 class="text-2xl font-bold mb-4">📝 TodoList</h3>
+                <p class="text-gray-400 mb-4">Organiza tu vida de manera simple y eficiente</p>
+                <div class="flex justify-center space-x-6">
+                    <a href="{% url 'login' %}" class="text-gray-400 hover:text-white">Iniciar Sesión</a>
+                    <a href="{% url 'register' %}" class="text-gray-400 hover:text-white">Registrarse</a>
+                </div>
+                <p class="text-gray-500 mt-8">&copy; 2024 TodoList. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

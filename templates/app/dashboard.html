@@ -1,0 +1,575 @@
+{% extends 'app/base.html' %}
+
+{% block title %}Dashboard - Todo App{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 lg:mb-8 space-y-4 lg:space-y-0">
+    <div>
+        <h1 class="text-2xl lg:text-3xl font-bold text-white mb-2">Dashboard</h1>
+        <p class="text-gray-400 text-sm lg:text-base">Gestiona tus tareas y proyectos</p>
+    </div>
+    
+    <!-- View Toggle Button Group -->
+    <div class="flex items-center justify-center lg:justify-end">
+        <div class="relative bg-dark-card rounded-xl p-1 shadow-lg">
+            <div id="toggle-slider" class="absolute top-1 left-1 w-24 lg:w-28 h-8 bg-gradient-to-r from-accent-blue to-blue-600 rounded-lg transition-all duration-300 ease-out shadow-md"></div>
+            <div class="flex relative z-10">
+                <button id="kanban-btn" class="view-toggle-btn active px-5 lg:px-7 py-2 rounded-lg text-xs lg:text-sm font-medium transition-all duration-300 ease-out" data-view="kanban">
+                    <div class="flex items-center space-x-1 lg:space-x-2">
+                        <svg class="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        <span>Kanban</span>
+                    </div>
+                </button>
+                <button id="list-btn" class="view-toggle-btn px-5 lg:px-7 py-2 rounded-lg text-xs lg:text-sm font-medium transition-all duration-300 ease-out" data-view="list">
+                    <div class="flex items-center space-x-1 lg:space-x-2">
+                        <svg class="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                        </svg>
+                        <span>Lista</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Kanban Board -->
+<div id="kanban-view" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+    <!-- Por Hacer -->
+    <div class="glass-effect rounded-xl p-4 lg:p-6">
+        <div class="flex items-center justify-between mb-3 lg:mb-4">
+            <h3 class="text-base lg:text-lg font-semibold text-white">Por Hacer</h3>
+            <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded-full">{{ status_groups.todo.count }}</span>
+        </div>
+        <div id="todo-column" class="space-y-2 lg:space-y-3 min-h-[150px] lg:min-h-[200px]">
+            {% for todo in status_groups.todo %}
+            <div class="todo-card bg-dark-bg border border-dark-border rounded-lg p-3 lg:p-4 cursor-pointer hover:bg-dark-border transition-colors" data-id="{{ todo.id }}" data-todo-id="{{ todo.id }}">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-white font-medium text-xs lg:text-sm mb-1 truncate">{{ todo.title }}</h4>
+                        {% if todo.description %}
+                        <p class="text-gray-400 text-xs mb-2 line-clamp-2">{{ todo.description|truncatechars:40 }}</p>
+                        {% endif %}
+                        <div class="flex items-center space-x-1 lg:space-x-2 flex-wrap">
+                            {% if todo.category %}
+                            <span class="inline-block w-2 h-2 lg:w-3 lg:h-3 rounded-full flex-shrink-0" style="background-color: {{ todo.category.color }}"></span>
+                            <span class="text-gray-400 text-xs truncate">{{ todo.category.name }}</span>
+                            {% endif %}
+                            <span class="text-gray-500 text-xs">{{ todo.created_at|date:"d/m" }}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-1 ml-2">
+                        <div class="drag-handle text-gray-500 hover:text-gray-300 cursor-move p-1">
+                            <svg class="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-8 text-gray-500">
+                <p class="text-sm">No hay tareas</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- En Progreso -->
+    <div class="glass-effect rounded-xl p-4 lg:p-6">
+        <div class="flex items-center justify-between mb-3 lg:mb-4">
+            <h3 class="text-base lg:text-lg font-semibold text-white">En Progreso</h3>
+            <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">{{ status_groups.in_progress.count }}</span>
+        </div>
+        <div id="in-progress-column" class="space-y-2 lg:space-y-3 min-h-[150px] lg:min-h-[200px]">
+            {% for todo in status_groups.in_progress %}
+            <div class="todo-card bg-dark-bg border border-dark-border rounded-lg p-3 lg:p-4 cursor-pointer hover:bg-dark-border transition-colors" data-id="{{ todo.id }}" data-todo-id="{{ todo.id }}">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-white font-medium text-xs lg:text-sm mb-1 truncate">{{ todo.title }}</h4>
+                        {% if todo.description %}
+                        <p class="text-gray-400 text-xs mb-2 line-clamp-2">{{ todo.description|truncatechars:40 }}</p>
+                        {% endif %}
+                        <div class="flex items-center space-x-1 lg:space-x-2 flex-wrap">
+                            {% if todo.category %}
+                            <span class="inline-block w-2 h-2 lg:w-3 lg:h-3 rounded-full flex-shrink-0" style="background-color: {{ todo.category.color }}"></span>
+                            <span class="text-gray-400 text-xs truncate">{{ todo.category.name }}</span>
+                            {% endif %}
+                            <span class="text-gray-500 text-xs">{{ todo.created_at|date:"d/m" }}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-1 ml-2">
+                        <div class="drag-handle text-gray-500 hover:text-gray-300 cursor-move p-1">
+                            <svg class="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-8 text-gray-500 no-drag">
+                <p class="text-sm">No hay tareas</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- En Revisión -->
+    <div class="glass-effect rounded-xl p-4 lg:p-6">
+        <div class="flex items-center justify-between mb-3 lg:mb-4">
+            <h3 class="text-base lg:text-lg font-semibold text-white">En Revisión</h3>
+            <span class="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">{{ status_groups.review.count }}</span>
+        </div>
+        <div id="review-column" class="space-y-2 lg:space-y-3 min-h-[150px] lg:min-h-[200px]">
+            {% for todo in status_groups.review %}
+            <div class="todo-card bg-dark-bg border border-dark-border rounded-lg p-3 lg:p-4 cursor-pointer hover:bg-dark-border transition-colors" data-id="{{ todo.id }}" data-todo-id="{{ todo.id }}">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-white font-medium text-xs lg:text-sm mb-1 truncate">{{ todo.title }}</h4>
+                        {% if todo.description %}
+                        <p class="text-gray-400 text-xs mb-2 line-clamp-2">{{ todo.description|truncatechars:40 }}</p>
+                        {% endif %}
+                        <div class="flex items-center space-x-1 lg:space-x-2 flex-wrap">
+                            {% if todo.category %}
+                            <span class="inline-block w-2 h-2 lg:w-3 lg:h-3 rounded-full flex-shrink-0" style="background-color: {{ todo.category.color }}"></span>
+                            <span class="text-gray-400 text-xs truncate">{{ todo.category.name }}</span>
+                            {% endif %}
+                            <span class="text-gray-500 text-xs">{{ todo.created_at|date:"d/m" }}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-1 ml-2">
+                        <div class="drag-handle text-gray-500 hover:text-gray-300 cursor-move p-1">
+                            <svg class="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-8 text-gray-500 no-drag">
+                <p class="text-sm">No hay tareas</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Completada -->
+    <div class="glass-effect rounded-xl p-4 lg:p-6">
+        <div class="flex items-center justify-between mb-3 lg:mb-4">
+            <h3 class="text-base lg:text-lg font-semibold text-white">Completada</h3>
+            <span class="bg-green-600 text-white text-xs px-2 py-1 rounded-full">{{ status_groups.done.count }}</span>
+        </div>
+        <div id="done-column" class="space-y-2 lg:space-y-3 min-h-[150px] lg:min-h-[200px]">
+            {% for todo in status_groups.done %}
+            <div class="todo-card bg-dark-bg border border-dark-border rounded-lg p-3 lg:p-4 cursor-pointer hover:bg-dark-border transition-colors" data-id="{{ todo.id }}" data-todo-id="{{ todo.id }}">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-white font-medium text-xs lg:text-sm mb-1 line-through truncate">{{ todo.title }}</h4>
+                        {% if todo.description %}
+                        <p class="text-gray-400 text-xs mb-2 line-through line-clamp-2">{{ todo.description|truncatechars:40 }}</p>
+                        {% endif %}
+                        <div class="flex items-center space-x-1 lg:space-x-2 flex-wrap">
+                            {% if todo.category %}
+                            <span class="inline-block w-2 h-2 lg:w-3 lg:h-3 rounded-full flex-shrink-0" style="background-color: {{ todo.category.color }}"></span>
+                            <span class="text-gray-400 text-xs truncate">{{ todo.category.name }}</span>
+                            {% endif %}
+                            <span class="text-gray-500 text-xs">{{ todo.created_at|date:"d/m" }}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-1 ml-2">
+                        <div class="drag-handle text-gray-500 hover:text-gray-300 cursor-move p-1">
+                            <svg class="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-8 text-gray-500 no-drag">
+                <p class="text-sm">No hay tareas</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- List View -->
+<div id="list-view" class="hidden">
+    <div class="space-y-3 lg:space-y-4">
+        {% for todo in todos %}
+        <div class="glass-effect rounded-xl p-4 lg:p-6 hover:shadow-lg transition-all duration-200">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-3 lg:space-y-0">
+                <div class="flex items-start lg:items-center space-x-3 lg:space-x-4">
+                    <div class="flex items-center space-x-2 lg:space-x-3">
+                        <div class="w-4 h-4 rounded-full border-2 border-gray-400 {% if todo.completed %}bg-green-500 border-green-500{% endif %} flex-shrink-0"></div>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="font-medium text-white text-sm lg:text-base {% if todo.completed %}line-through text-gray-400{% endif %} truncate">{{ todo.title }}</h3>
+                            {% if todo.description %}
+                            <p class="text-gray-400 text-xs lg:text-sm mt-1 line-clamp-2">{{ todo.description|truncatechars:80 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 lg:gap-4">
+                    <!-- Status Badge -->
+                    <span class="px-2 lg:px-3 py-1 rounded-full text-xs font-medium
+                        {% if todo.status == 'todo' %}bg-gray-600 text-white
+                        {% elif todo.status == 'in_progress' %}bg-blue-600 text-white
+                        {% elif todo.status == 'review' %}bg-purple-600 text-white
+                        {% elif todo.status == 'done' %}bg-green-600 text-white{% endif %}">
+                        {% if todo.status == 'todo' %}Por Hacer
+                        {% elif todo.status == 'in_progress' %}En Progreso
+                        {% elif todo.status == 'review' %}En Revisión
+                        {% elif todo.status == 'done' %}Completada{% endif %}
+                    </span>
+                    
+                    <!-- Priority Badge -->
+                    <span class="px-2 py-1 rounded text-xs
+                        {% if todo.priority == 'low' %}bg-green-100 text-green-800
+                        {% elif todo.priority == 'medium' %}bg-yellow-100 text-yellow-800
+                        {% elif todo.priority == 'high' %}bg-orange-100 text-orange-800
+                        {% elif todo.priority == 'urgent' %}bg-red-100 text-red-800{% endif %}">
+                        {% if todo.priority == 'low' %}Baja
+                        {% elif todo.priority == 'medium' %}Media
+                        {% elif todo.priority == 'high' %}Alta
+                        {% elif todo.priority == 'urgent' %}Urgente{% endif %}
+                    </span>
+                    
+                    <!-- Category -->
+                    {% if todo.category %}
+                    <div class="flex items-center space-x-1 lg:space-x-2">
+                        <span class="inline-block w-2 h-2 lg:w-3 lg:h-3 rounded-full flex-shrink-0" style="background-color: {{ todo.category.color }}"></span>
+                        <span class="text-gray-400 text-xs lg:text-sm truncate">{{ todo.category.name }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Date -->
+                    <span class="text-gray-500 text-xs lg:text-sm">{{ todo.created_at|date:"d/m/Y" }}</span>
+                    
+                    <!-- Actions -->
+                    <div class="flex items-center space-x-1 lg:space-x-2">
+                        <a href="{% url 'todo_detail' todo.id %}" class="text-accent-blue hover:text-blue-400 transition-colors p-1">
+                            <svg class="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </a>
+                        <a href="{% url 'toggle_todo' todo.id %}" class="text-gray-400 hover:text-green-400 transition-colors p-1">
+                            <svg class="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </a>
+                        <a href="{% url 'delete_todo' todo.id %}" class="text-gray-400 hover:text-red-400 transition-colors p-1" onclick="return confirm('¿Estás seguro de que quieres eliminar esta tarea?')">
+                            <svg class="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-12">
+            <div class="glass-effect rounded-xl p-8 max-w-md mx-auto">
+                <svg class="w-16 h-16 text-gray-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+                <h3 class="text-xl font-semibold text-white mb-2">No hay tareas</h3>
+                <p class="text-gray-400 mb-4">Crea tu primera tarea para comenzar</p>
+                <a href="{% url 'add_todo' %}" class="inline-flex items-center px-4 py-2 bg-accent-blue text-white rounded-lg hover:bg-blue-600 transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Crear Tarea
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Animated Button Group Styles */
+    .view-toggle-btn {
+        position: relative;
+        z-index: 10;
+        color: #9CA3AF;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .view-toggle-btn:hover {
+        color: #FFFFFF;
+        transform: translateY(-1px);
+    }
+    
+    .view-toggle-btn.active {
+        color: #FFFFFF;
+        font-weight: 600;
+    }
+    
+    .view-toggle-btn:not(.active) {
+        color: #9CA3AF;
+    }
+    
+    /* Slider Animation */
+    #toggle-slider {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    
+    /* Hover effects for the button group */
+    .bg-dark-card:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        transform: translateY(-2px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* View transition animations */
+    .view-transition {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .view-transition.fade-out {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    
+    .view-transition.fade-in {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    /* Drag handle styles */
+    .drag-handle {
+        transition: all 0.2s ease;
+    }
+    
+    .drag-handle:hover {
+        transform: scale(1.1);
+    }
+    
+    /* Todo card hover effect */
+    .todo-card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Prevent text selection during drag */
+    .todo-card {
+        user-select: none;
+    }
+    
+    /* Line clamp for descriptions */
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Initializing Sortable...');
+        
+        // Initialize view toggle functionality
+        initializeViewToggle();
+        
+        // Initialize Sortable for Kanban
+        initializeSortable();
+        
+        // Initialize todo card click handlers
+        initializeTodoCardClicks();
+    });
+
+    // View Toggle Functionality
+    function initializeViewToggle() {
+        const kanbanBtn = document.getElementById('kanban-btn');
+        const listBtn = document.getElementById('list-btn');
+        const toggleSlider = document.getElementById('toggle-slider');
+        const kanbanView = document.getElementById('kanban-view');
+        const listView = document.getElementById('list-view');
+        
+        let currentView = 'kanban';
+        
+        function switchView(view) {
+            const isKanban = view === 'kanban';
+            
+            // Animate slider - Fixed positioning
+            if (isKanban) {
+                toggleSlider.style.transform = 'translateX(0)';
+            } else {
+                toggleSlider.style.transform = 'translateX(100%)';
+            }
+            
+            // Update button states
+            kanbanBtn.classList.toggle('active', isKanban);
+            listBtn.classList.toggle('active', !isKanban);
+            
+            // Animate view transition
+            if (isKanban) {
+                // Switch to Kanban
+                listView.classList.add('view-transition', 'fade-out');
+                setTimeout(() => {
+                    listView.classList.add('hidden');
+                    listView.classList.remove('fade-out');
+                    kanbanView.classList.remove('hidden');
+                    kanbanView.classList.add('view-transition', 'fade-in');
+                    setTimeout(() => {
+                        kanbanView.classList.remove('fade-in');
+                    }, 300);
+                }, 150);
+            } else {
+                // Switch to List
+                kanbanView.classList.add('view-transition', 'fade-out');
+                setTimeout(() => {
+                    kanbanView.classList.add('hidden');
+                    kanbanView.classList.remove('fade-out');
+                    listView.classList.remove('hidden');
+                    listView.classList.add('view-transition', 'fade-in');
+                    setTimeout(() => {
+                        listView.classList.remove('fade-in');
+                    }, 300);
+                }, 150);
+            }
+            
+            currentView = view;
+        }
+        
+        // Event listeners
+        kanbanBtn.addEventListener('click', () => {
+            if (currentView !== 'kanban') {
+                switchView('kanban');
+            }
+        });
+        
+        listBtn.addEventListener('click', () => {
+            if (currentView !== 'list') {
+                switchView('list');
+            }
+        });
+    }
+
+    // Sortable Initialization
+    function initializeSortable() {
+        const columns = ['todo-column', 'in-progress-column', 'review-column', 'done-column'];
+        const statusMap = {
+            'todo-column': 'todo',
+            'in-progress-column': 'in_progress',
+            'review-column': 'review',
+            'done-column': 'done'
+        };
+
+        columns.forEach(columnId => {
+            const column = document.getElementById(columnId);
+            console.log(`Looking for column: ${columnId}`, column);
+            
+            if (column) {
+                console.log(`Initializing Sortable for ${columnId}`);
+                
+                new Sortable(column, {
+                    group: 'todos',
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    handle: '.drag-handle', // Only drag from handle
+                    filter: '.no-drag', // Don't drag empty state
+                    onStart: function(evt) {
+                        console.log('Drag started:', evt.item.dataset.id);
+                    },
+                    onEnd: function(evt) {
+                        const todoId = evt.item.dataset.id;
+                        const newStatus = statusMap[evt.to.id];
+                        const newOrder = Array.from(evt.to.children).indexOf(evt.item);
+                        
+                        console.log(`Drag ended: Todo ${todoId} -> ${newStatus} (order: ${newOrder})`);
+                        
+                        updateTodoOrder(todoId, newStatus, newOrder);
+                    }
+                });
+            } else {
+                console.error(`Column not found: ${columnId}`);
+            }
+        });
+    }
+
+    // Click handler for todo cards
+    function initializeTodoCardClicks() {
+        document.addEventListener('click', function(e) {
+            const todoCard = e.target.closest('.todo-card');
+            if (todoCard && !e.target.closest('.drag-handle')) {
+                const todoId = todoCard.dataset.todoId;
+                if (todoId) {
+                    window.location.href = `/todo/detail/${todoId}/`;
+                }
+            }
+        });
+    }
+
+    function updateTodoOrder(todoId, status, order) {
+        console.log(`Sending update: todo_id=${todoId}, status=${status}, order=${order}`);
+        
+        const csrfToken = getCookie('csrftoken');
+        console.log('CSRF Token:', csrfToken);
+        
+        fetch('{% url "update_todo_order" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                todo_id: todoId,
+                status: status,
+                order: order
+            })
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Response data:', data);
+            if (data.success) {
+                console.log('Todo order updated successfully');
+                // Reload the page to show updated data
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+            } else {
+                console.error('Error updating todo order:', data.error);
+                alert('Error al actualizar la tarea: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            alert('Error de conexión al actualizar la tarea');
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}

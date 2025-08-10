@@ -1,0 +1,184 @@
+<!-- Header -->
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-white mb-2">Dashboard</h1>
+        <p class="text-gray-400">Gestiona tus tareas y proyectos</p>
+    </div>
+    <div class="flex items-center space-x-4">
+        <!-- View Toggle -->
+        <div class="flex bg-dark-card rounded-lg p-1">
+            <button id="kanban-view" class="view-toggle px-4 py-2 rounded-md bg-accent-blue text-white text-sm font-medium">
+                Kanban
+            </button>
+            <button id="list-view" class="view-toggle px-4 py-2 rounded-md text-gray-400 hover:text-white text-sm font-medium">
+                Lista
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Kanban View -->
+<div id="kanban-container" class="space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Por Hacer -->
+        <div class="glass-effect rounded-xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-white">Por Hacer</h3>
+                <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded-full">{{ status_groups.todo.count }}</span>
+            </div>
+            <div id="todo-column" class="space-y-3 min-h-[200px]">
+                {% for todo in status_groups.todo %}
+                <div class="todo-card bg-dark-bg border border-dark-border rounded-lg p-4 cursor-move" data-id="{{ todo.id }}">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h4 class="text-white font-medium text-sm mb-1">{{ todo.title }}</h4>
+                            {% if todo.description %}
+                            <p class="text-gray-400 text-xs mb-2">{{ todo.description|truncatechars:50 }}</p>
+                            {% endif %}
+                            <div class="flex items-center space-x-2">
+                                {% if todo.category %}
+                                <span class="inline-block w-3 h-3 rounded-full" style="background-color: {{ todo.category.color }}"></span>
+                                <span class="text-gray-400 text-xs">{{ todo.category.name }}</span>
+                                {% endif %}
+                                <span class="text-gray-500 text-xs">{{ todo.created_at|date:"d/m" }}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <a href="#" class="todo-detail-link text-accent-blue hover:text-blue-400 text-xs" data-id="{{ todo.id }}">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- En Progreso -->
+        <div class="glass-effect rounded-xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-white">En Progreso</h3>
+                <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">{{ status_groups.in_progress.count }}</span>
+            </div>
+            <div id="in-progress-column" class="space-y-3 min-h-[200px]">
+                {% for todo in status_groups.in_progress %}
+                <div class="todo-card bg-dark-bg border border-dark-border rounded-lg p-4 cursor-move" data-id="{{ todo.id }}">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h4 class="text-white font-medium text-sm mb-1">{{ todo.title }}</h4>
+                            {% if todo.description %}
+                            <p class="text-gray-400 text-xs mb-2">{{ todo.description|truncatechars:50 }}</p>
+                            {% endif %}
+                            <div class="flex items-center space-x-2">
+                                {% if todo.category %}
+                                <span class="inline-block w-3 h-3 rounded-full" style="background-color: {{ todo.category.color }}"></span>
+                                <span class="text-gray-400 text-xs">{{ todo.category.name }}</span>
+                                {% endif %}
+                                <span class="text-gray-500 text-xs">{{ todo.created_at|date:"d/m" }}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <a href="#" class="todo-detail-link text-accent-blue hover:text-blue-400 text-xs" data-id="{{ todo.id }}">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- En Revisión -->
+        <div class="glass-effect rounded-xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-white">En Revisión</h3>
+                <span class="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">{{ status_groups.review.count }}</span>
+            </div>
+            <div id="review-column" class="space-y-3 min-h-[200px]">
+                {% for todo in status_groups.review %}
+                <div class="todo-card bg-dark-bg border border-dark-border rounded-lg p-4 cursor-move" data-id="{{ todo.id }}">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h4 class="text-white font-medium text-sm mb-1">{{ todo.title }}</h4>
+                            {% if todo.description %}
+                            <p class="text-gray-400 text-xs mb-2">{{ todo.description|truncatechars:50 }}</p>
+                            {% endif %}
+                            <div class="flex items-center space-x-2">
+                                {% if todo.category %}
+                                <span class="inline-block w-3 h-3 rounded-full" style="background-color: {{ todo.category.color }}"></span>
+                                <span class="text-gray-400 text-xs">{{ todo.category.name }}</span>
+                                {% endif %}
+                                <span class="text-gray-500 text-xs">{{ todo.created_at|date:"d/m" }}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <a href="#" class="todo-detail-link text-accent-blue hover:text-blue-400 text-xs" data-id="{{ todo.id }}">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Completada -->
+        <div class="glass-effect rounded-xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-white">Completada</h3>
+                <span class="bg-green-600 text-white text-xs px-2 py-1 rounded-full">{{ status_groups.done.count }}</span>
+            </div>
+            <div id="done-column" class="space-y-3 min-h-[200px]">
+                {% for todo in status_groups.done %}
+                <div class="todo-card bg-dark-bg border border-dark-border rounded-lg p-4 cursor-move" data-id="{{ todo.id }}">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h4 class="text-white font-medium text-sm mb-1 line-through">{{ todo.title }}</h4>
+                            {% if todo.description %}
+                            <p class="text-gray-400 text-xs mb-2 line-through">{{ todo.description|truncatechars:50 }}</p>
+                            {% endif %}
+                            <div class="flex items-center space-x-2">
+                                {% if todo.category %}
+                                <span class="inline-block w-3 h-3 rounded-full" style="background-color: {{ todo.category.color }}"></span>
+                                <span class="text-gray-400 text-xs">{{ todo.category.name }}</span>
+                                {% endif %}
+                                <span class="text-gray-500 text-xs">{{ todo.created_at|date:"d/m" }}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <a href="#" class="todo-detail-link text-accent-blue hover:text-blue-400 text-xs" data-id="{{ todo.id }}">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- List View (Hidden by default) -->
+<div id="list-container" class="hidden">
+    <!-- List content will be loaded here -->
+</div>

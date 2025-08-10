@@ -1,0 +1,78 @@
+{% extends 'app/base.html' %}
+
+{% block title %}Editar Categoría - Todo App{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-white mb-2">Editar Categoría</h1>
+        <p class="text-gray-400">Modifica los detalles de tu categoría</p>
+    </div>
+    <a href="{% url 'categories' %}" class="flex items-center space-x-2 px-4 py-2 bg-dark-card text-gray-300 hover:text-white rounded-lg transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        <span>Volver a Categorías</span>
+    </a>
+</div>
+
+<!-- Form -->
+<div class="glass-effect rounded-xl p-8 max-w-2xl">
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+        
+        <div>
+            <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Nombre *</label>
+            <input type="text" id="name" name="name" value="{{ category.name }}" required
+                   class="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-lg text-white focus:outline-none focus:border-accent-blue transition-colors"
+                   placeholder="Ej: Trabajo, Personal, Proyectos...">
+        </div>
+
+        <div>
+            <label for="color" class="block text-sm font-medium text-gray-300 mb-2">Color</label>
+            <div class="flex items-center space-x-4">
+                <input type="color" id="color" name="color" value="{{ category.color }}"
+                       class="w-16 h-12 border border-dark-border rounded-lg cursor-pointer">
+                <span class="text-gray-400 text-sm">Elige un color para identificar esta categoría</span>
+            </div>
+        </div>
+
+        <!-- Color Presets -->
+        <div>
+            <label class="block text-sm font-medium text-gray-300 mb-3">Colores Predefinidos</label>
+            <div class="grid grid-cols-6 gap-3">
+                <button type="button" class="w-10 h-10 rounded-full bg-red-500 hover:bg-red-600 transition-colors" onclick="setColor('#EF4444')"></button>
+                <button type="button" class="w-10 h-10 rounded-full bg-orange-500 hover:bg-orange-600 transition-colors" onclick="setColor('#F97316')"></button>
+                <button type="button" class="w-10 h-10 rounded-full bg-yellow-500 hover:bg-yellow-600 transition-colors" onclick="setColor('#EAB308')"></button>
+                <button type="button" class="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors" onclick="setColor('#22C55E')"></button>
+                <button type="button" class="w-10 h-10 rounded-full bg-blue-500 hover:bg-blue-600 transition-colors" onclick="setColor('#3B82F6')"></button>
+                <button type="button" class="w-10 h-10 rounded-full bg-purple-500 hover:bg-purple-600 transition-colors" onclick="setColor('#A855F7')"></button>
+                <button type="button" class="w-10 h-10 rounded-full bg-pink-500 hover:bg-pink-600 transition-colors" onclick="setColor('#EC4899')"></button>
+                <button type="button" class="w-10 h-10 rounded-full bg-indigo-500 hover:bg-indigo-600 transition-colors" onclick="setColor('#6366F1')"></button>
+                <button type="button" class="w-10 h-10 rounded-full bg-teal-500 hover:bg-teal-600 transition-colors" onclick="setColor('#14B8A6')"></button>
+                <button type="button" class="w-10 h-10 rounded-full bg-gray-500 hover:bg-gray-600 transition-colors" onclick="setColor('#6B7280')"></button>
+                <button type="button" class="w-10 h-10 rounded-full bg-emerald-500 hover:bg-emerald-600 transition-colors" onclick="setColor('#10B981')"></button>
+                <button type="button" class="w-10 h-10 rounded-full bg-cyan-500 hover:bg-cyan-600 transition-colors" onclick="setColor('#06B6D4')"></button>
+            </div>
+        </div>
+
+        <div class="flex justify-end space-x-3">
+            <a href="{% url 'categories' %}" class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                Cancelar
+            </a>
+            <button type="submit" class="px-6 py-3 bg-accent-blue text-white rounded-lg hover:bg-blue-600 transition-colors font-medium">
+                Guardar Cambios
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function setColor(color) {
+        document.getElementById('color').value = color;
+    }
+</script>
+{% endblock %}
