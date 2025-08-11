@@ -3,6 +3,8 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -19,9 +21,14 @@ def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Cuenta creada exitosamente. Por favor inicia sesión.')
-            return redirect('login')
+            try:
+                form.save()
+                messages.success(request, 'Cuenta creada exitosamente. Por favor inicia sesión.')
+                return redirect('login')
+            except (IntegrityError, ValidationError):
+                form.add_error(None, 'No se pudo crear la cuenta. Verifica los datos o prueba con otro usuario.')
+            except Exception:
+                form.add_error(None, 'Ocurrió un error inesperado al crear la cuenta. Inténtalo de nuevo.')
     else:
         form = UserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
