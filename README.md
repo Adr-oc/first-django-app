@@ -78,6 +78,7 @@ first-django-app/
 ├── static/                # Archivos estáticos
 ├── manage.py             # Script de gestión de Django
 ├── requirements.txt      # Dependencias del proyecto
+├── render.yaml           # Configuración para Render
 └── README.md            # Este archivo
 ```
 
@@ -115,15 +116,56 @@ tailwind.config = {
 3. Añade nuevas URLs en `app/urls.py`
 4. Actualiza el template en `templates/app/todo_list.html`
 
-## 🚀 Despliegue
+## 🚀 Despliegue en Render
 
-Para desplegar en producción:
+### Configuración Automática (Recomendado)
 
-1. Configura una base de datos PostgreSQL o MySQL
-2. Actualiza `settings.py` con las configuraciones de producción
-3. Ejecuta `python manage.py collectstatic`
-4. Configura un servidor web como Nginx
-5. Usa Gunicorn como servidor WSGI
+1. **Conecta tu repositorio a Render**
+   - Ve a [render.com](https://render.com)
+   - Crea una nueva cuenta o inicia sesión
+   - Haz clic en "New +" y selecciona "Web Service"
+   - Conecta tu repositorio de GitHub
+
+2. **Configura el servicio**
+   - **Name**: `first-django-app` (o el nombre que prefieras)
+   - **Environment**: `Python 3`
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `python manage.py collectstatic --noinput && python manage.py migrate && gunicorn todo_list.wsgi:application`
+
+3. **Variables de Entorno**
+   - `DEBUG`: `False`
+   - `SECRET_KEY`: Render generará automáticamente una clave segura
+
+4. **Deploy**
+   - Haz clic en "Create Web Service"
+   - Render detectará automáticamente el archivo `render.yaml` y configurará todo
+
+### Configuración Manual
+
+Si prefieres configurar manualmente:
+
+1. **Crea un nuevo Web Service en Render**
+2. **Configura las variables de entorno**:
+   ```
+   DEBUG=False
+   SECRET_KEY=<tu-clave-secreta>
+   ```
+3. **Build Command**: `pip install -r requirements.txt`
+4. **Start Command**: `python manage.py collectstatic --noinput && python manage.py migrate && gunicorn todo_list.wsgi:application`
+
+### Variables de Entorno Disponibles
+
+- `DEBUG`: Controla el modo debug (True/False)
+- `SECRET_KEY`: Clave secreta de Django (Render la genera automáticamente)
+- `DATABASE_URL`: URL de la base de datos (opcional, por defecto usa SQLite)
+
+### Notas Importantes
+
+- ✅ El archivo `render.yaml` ya está configurado para el deploy automático
+- ✅ `gunicorn` está incluido en `requirements.txt`
+- ✅ Los archivos estáticos se configuran automáticamente
+- ✅ `ALLOWED_HOSTS` incluye dominios de Render
+- ✅ Las migraciones se ejecutan automáticamente en el deploy
 
 ## 📝 Licencia
 
