@@ -12,3 +12,5 @@ services:
         value: "False"
       - key: SECRET_KEY
         generateValue: true
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://first-django-app.onrender.com,https://*.onrender.com"

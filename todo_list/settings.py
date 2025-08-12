@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-5%*kn5*p&s8dokkt&z6-i&q0x+lc9ty^1^2j!o%j%7+-yt(kcv')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = [
     'localhost', 
@@ -35,6 +35,11 @@ ALLOWED_HOSTS = [
     '.onrender.com',  # Permite cualquier subdominio de onrender.com
 ]
 
+# CSRF Trusted Origins for production
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',') if os.environ.get('CSRF_TRUSTED_ORIGINS') else [
+    'https://first-django-app.onrender.com',
+    'https://*.onrender.com',
+]
 
 # Application definition
 

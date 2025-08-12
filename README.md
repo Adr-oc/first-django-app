@@ -157,6 +157,7 @@ Si prefieres configurar manualmente:
 
 - `DEBUG`: Controla el modo debug (True/False)
 - `SECRET_KEY`: Clave secreta de Django (Render la genera automáticamente)
+- `CSRF_TRUSTED_ORIGINS`: Dominios confiables para CSRF (configurado automáticamente)
 - `DATABASE_URL`: URL de la base de datos (opcional, por defecto usa SQLite)
 
 ### Notas Importantes
@@ -165,6 +166,7 @@ Si prefieres configurar manualmente:
 - ✅ `gunicorn` está incluido en `requirements.txt`
 - ✅ Los archivos estáticos se configuran automáticamente
 - ✅ `ALLOWED_HOSTS` incluye dominios de Render
+- ✅ `CSRF_TRUSTED_ORIGINS` configurado para dominios de Render
 - ✅ Las migraciones se ejecutan automáticamente en el deploy
 
 ## 📝 Licencia
