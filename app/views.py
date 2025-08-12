@@ -9,6 +9,7 @@ from django.views.decorators.http import require_POST
 from django.utils import timezone
 import json
 from .models import Todo, Category, Note
+from .services import LocationIQService
 
 # Landing page
 def landing_page(request):
@@ -226,3 +227,71 @@ def update_todo_order(request):
     except Exception as e:
         print(f"Error updating todo: {str(e)}")  # Debug
         return JsonResponse({'success': False, 'error': str(e)})
+
+# Location management
+@csrf_exempt
+@require_POST
+@login_required
+def update_todo_location(request, todo_id):
+    """
+    Vista AJAX para actualizar la ubicación de una tarea
+    """
+    try:
+        todo = get_object_or_404(Todo, id=todo_id, user=request.user)
+        data = json.loads(request.body)
+        
+        latitude = data.get('latitude')
+        longitude = data.get('longitude')
+        
+        if not latitude or not longitude:
+            return JsonResponse({
+                'success': False, 
+                'error': 'Coordenadas requeridas'
+            })
+        
+        # Validar que las coordenadas sean números válidos
+        try:
+            latitude = float(latitude)
+            longitude = float(longitude)
+        except (ValueError, TypeError):
+            return JsonResponse({
+                'success': False, 
+                'error': 'Coordenadas inválidas'
+            })
+        
+        # Obtener dirección usando LocationIQ
+        location_service = LocationIQService()
+        
+        if not location_service.is_api_key_valid():
+            return JsonResponse({
+                'success': False, 
+                'error': 'API key de LocationIQ no configurada'
+            })
+        
+        address_info = location_service.get_address_from_coordinates(latitude, longitude)
+        
+        if address_info:
+            # Actualizar la tarea con la información de ubicación
+            todo.latitude = latitude
+            todo.longitude = longitude
+            todo.address = address_info.get('formatted_address', '')
+            todo.location_updated_at = timezone.now()
+            todo.save()
+            
+            return JsonResponse({
+                'success': True,
+                'address': address_info.get('formatted_address', ''),
+                'display_name': address_info.get('display_name', ''),
+                'location_updated_at': todo.location_updated_at.isoformat()
+            })
+        else:
+            return JsonResponse({
+                'success': False, 
+                'error': 'No se pudo obtener la dirección'
+            })
+            
+    except Exception as e:
+        return JsonResponse({
+            'success': False, 
+            'error': f'Error interno: {str(e)}'
+        })

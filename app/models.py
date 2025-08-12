@@ -44,6 +44,12 @@ class Todo(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     todo_order = models.IntegerField(default=0)  # For drag & drop ordering
     
+    # Location fields
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    address = models.TextField(blank=True, null=True)
+    location_updated_at = models.DateTimeField(null=True, blank=True)
+    
     def __str__(self):
         return self.title
     

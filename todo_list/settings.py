@@ -151,3 +151,7 @@ LOGIN_URL = '/login/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# LocationIQ API Configuration
+LOCATIONIQ_API_KEY = os.environ.get('LOCATIONIQ_API_KEY', '')
+LOCATIONIQ_BASE_URL = os.environ.get('LOCATIONIQ_BASE_URL', 'https://us1.locationiq.com/v1')

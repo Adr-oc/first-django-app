@@ -23,4 +23,5 @@ urlpatterns = [
     
     # AJAX endpoints
     path('update-order/', views.update_todo_order, name='update_todo_order'),
+    path('location/<int:todo_id>/', views.update_todo_location, name='update_todo_location'),
 ]
