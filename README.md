@@ -1,220 +1,138 @@
-# Todo List App - Django
+# Todo List App con Django y Tailwind CSS
 
-Una aplicación de gestión de tareas moderna construida con Django y Tailwind CSS, con funcionalidades de Kanban board, categorías, notas y drag & drop.
+Una aplicación simple de lista de tareas construida con Django y estilizada con Tailwind CSS.
 
 ## 🚀 Características
 
-- **Dashboard Kanban**: Vista de tablero con drag & drop entre columnas
-- **Vista Lista**: Vista tradicional de lista de tareas
-- **Categorías**: Organización por categorías con colores personalizados
-- **Notas**: Sistema de notas dentro de cada tarea
-- **Autenticación**: Sistema de login/registro de usuarios
-- **Responsive**: Diseño adaptativo para móviles y desktop
-- **Dark Theme**: Interfaz moderna con tema oscuro
+- ✅ Agregar nuevas tareas
+- ✅ Marcar tareas como completadas
+- ✅ Eliminar tareas
+- 🎨 Interfaz moderna y responsive con Tailwind CSS
+- 📱 Diseño mobile-first
+- ⚡ Interacciones suaves y animaciones
 
-## 🛠️ Tecnologías
+## 🛠️ Tecnologías Utilizadas
 
 - **Backend**: Django 5.2.5
-- **Frontend**: Tailwind CSS
-- **Base de Datos**: PostgreSQL (producción) / SQLite (desarrollo)
-- **JavaScript**: Vanilla JS + SortableJS para drag & drop
-- **Servidor**: Gunicorn (producción)
+- **Frontend**: Tailwind CSS (via CDN)
+- **Base de Datos**: SQLite (por defecto)
+- **Python**: 3.x
 
-## 📦 Instalación Local
+## 📦 Instalación
 
-### Prerrequisitos
-- Python 3.13+
-- pip
-- virtualenv
+1. **Clona el repositorio**
+   ```bash
+   git clone <tu-repositorio>
+   cd first-django-app
+   ```
 
-### Pasos
+2. **Crea un entorno virtual**
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate  # En Linux/Mac
+   # o
+   venv\Scripts\activate  # En Windows
+   ```
 
-1. **Clonar el repositorio**
-```bash
-git clone <tu-repositorio>
-cd first-django-app
-```
+3. **Instala las dependencias**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-2. **Crear entorno virtual**
-```bash
-python3 -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate
-```
+4. **Ejecuta las migraciones**
+   ```bash
+   python manage.py migrate
+   ```
 
-3. **Instalar dependencias**
-```bash
-pip install -r requirements.txt
-```
+5. **Inicia el servidor de desarrollo**
+   ```bash
+   python manage.py runserver
+   ```
 
-4. **Configurar base de datos**
-```bash
-python manage.py migrate
-```
+6. **Abre tu navegador**
+   Ve a `http://127.0.0.1:8000/`
 
-5. **Crear superusuario (opcional)**
-```bash
-python manage.py createsuperuser
-```
+## 🎯 Cómo Usar
 
-6. **Ejecutar servidor de desarrollo**
-```bash
-python manage.py runserver
-```
-
-7. **Acceder a la aplicación**
-- URL: http://localhost:8000
-- Admin: http://localhost:8000/admin
-
-## 🚀 Despliegue en Render
-
-### Opción 1: Despliegue Automático con render.yaml
-
-1. **Subir código a GitHub**
-```bash
-git add .
-git commit -m "Preparar para despliegue en Render"
-git push origin main
-```
-
-2. **Conectar con Render**
-- Ve a [render.com](https://render.com)
-- Crea una cuenta o inicia sesión
-- Haz clic en "New +" → "Blueprint"
-- Conecta tu repositorio de GitHub
-- Render detectará automáticamente el archivo `render.yaml`
-
-3. **Configurar variables de entorno**
-- `SECRET_KEY`: Se genera automáticamente
-- `DATABASE_URL`: Se configura automáticamente desde la base de datos PostgreSQL
-
-### Opción 2: Despliegue Manual
-
-1. **Crear base de datos PostgreSQL**
-- En Render Dashboard: "New +" → "PostgreSQL"
-- Nombre: `todo-list-db`
-- Plan: Free
-
-2. **Crear Web Service**
-- "New +" → "Web Service"
-- Conecta tu repositorio de GitHub
-- Configuración:
-  - **Build Command**: `./build.sh`
-  - **Start Command**: `gunicorn todo_list.wsgi:application`
-  - **Environment Variables**:
-    - `SECRET_KEY`: Genera una clave secreta
-    - `DATABASE_URL`: URL de tu base de datos PostgreSQL
-
-## 🔧 Configuración de Producción
-
-### Variables de Entorno Requeridas
-
-```bash
-SECRET_KEY=tu-clave-secreta-aqui
-DATABASE_URL=postgresql://usuario:password@host:puerto/database
-```
-
-### Archivos de Configuración
-
-- `build.sh`: Script de construcción para Render
-- `render.yaml`: Configuración de despliegue automático
-- `requirements.txt`: Dependencias de Python
-- `todo_list/settings.py`: Configuración de Django
+1. **Agregar una tarea**: Escribe el título de la tarea en el campo de texto y presiona "Agregar"
+2. **Marcar como completada**: Haz clic en el círculo vacío junto a la tarea
+3. **Eliminar tarea**: Haz clic en el ícono de papelera
+4. **Ver estadísticas**: Las estadísticas se muestran en la parte inferior
 
 ## 📁 Estructura del Proyecto
 
 ```
 first-django-app/
 ├── app/                    # Aplicación principal
-│   ├── models.py          # Modelos de datos
-│   ├── views.py           # Vistas y lógica
-│   ├── urls.py            # URLs de la app
-│   └── admin.py           # Configuración del admin
+│   ├── models.py          # Modelo Todo
+│   ├── views.py           # Vistas de la aplicación
+│   ├── urls.py            # URLs de la aplicación
+│   └── migrations/        # Migraciones de la base de datos
 ├── todo_list/             # Configuración del proyecto
 │   ├── settings.py        # Configuración de Django
 │   ├── urls.py            # URLs principales
-│   └── wsgi.py            # Configuración WSGI
-├── templates/             # Plantillas HTML
-│   ├── app/               # Plantillas de la app
-│   └── registration/      # Plantillas de autenticación
+│   └── wsgi.py           # Configuración WSGI
+├── templates/             # Templates HTML
+│   └── app/
+│       └── todo_list.html # Template principal
 ├── static/                # Archivos estáticos
-├── build.sh               # Script de construcción
-├── render.yaml            # Configuración de Render
-└── requirements.txt       # Dependencias
+├── manage.py             # Script de gestión de Django
+├── requirements.txt      # Dependencias del proyecto
+└── README.md            # Este archivo
 ```
 
-## 🎨 Características de la UI
+## 🎨 Tailwind CSS
 
-### Drag & Drop Intuitivo
-- **Click en tarjeta**: Navega a detalles de la tarea
-- **Drag desde handle**: Mueve tarea entre columnas
-- **Área específica**: Solo el icono de líneas permite drag
+La aplicación utiliza Tailwind CSS a través de CDN para un desarrollo rápido. Las clases principales utilizadas incluyen:
 
-### Responsive Design
-- **Mobile-first**: Optimizado para dispositivos móviles
-- **Breakpoints**: Adaptativo a diferentes tamaños de pantalla
-- **Touch-friendly**: Áreas de toque apropiadas para móviles
+- **Layout**: `container`, `flex`, `grid`, `space-y-3`
+- **Spacing**: `px-4`, `py-8`, `mb-8`, `gap-2`
+- **Colors**: `bg-gray-100`, `text-gray-800`, `bg-primary`
+- **Components**: `rounded-lg`, `shadow-md`, `hover:shadow-lg`
+- **Responsive**: `max-w-md`, `mx-auto`
 
-### Dark Theme
-- **Colores modernos**: Paleta de colores oscura
-- **Contraste optimizado**: Legibilidad mejorada
-- **Efectos visuales**: Hover states y transiciones suaves
+## 🔧 Personalización
 
-## 🔒 Seguridad
+### Cambiar colores
+Edita la configuración de Tailwind en `templates/app/todo_list.html`:
 
-- **Autenticación**: Sistema de usuarios con Django Auth
-- **CSRF Protection**: Protección contra ataques CSRF
-- **SQL Injection**: Prevención mediante ORM de Django
-- **XSS Protection**: Headers de seguridad configurados
-- **HTTPS**: Forzado en producción
-
-## 📊 Base de Datos
-
-### Modelos Principales
-
-- **User**: Usuarios del sistema (Django Auth)
-- **Category**: Categorías de tareas con colores
-- **Todo**: Tareas con estado, prioridad y descripción
-- **Note**: Notas asociadas a cada tarea
-
-### Migraciones
-
-```bash
-# Crear migraciones
-python manage.py makemigrations
-
-# Aplicar migraciones
-python manage.py migrate
+```javascript
+tailwind.config = {
+    theme: {
+        extend: {
+            colors: {
+                primary: '#3B82F6',    // Azul
+                secondary: '#10B981',  // Verde
+            }
+        }
+    }
+}
 ```
 
-## 🧪 Testing
+### Agregar nuevas funcionalidades
+1. Modifica el modelo en `app/models.py`
+2. Actualiza las vistas en `app/views.py`
+3. Añade nuevas URLs en `app/urls.py`
+4. Actualiza el template en `templates/app/todo_list.html`
 
-```bash
-# Ejecutar tests
-python manage.py test
+## 🚀 Despliegue
 
-# Tests específicos
-python manage.py test app.tests
-```
+Para desplegar en producción:
+
+1. Configura una base de datos PostgreSQL o MySQL
+2. Actualiza `settings.py` con las configuraciones de producción
+3. Ejecuta `python manage.py collectstatic`
+4. Configura un servidor web como Nginx
+5. Usa Gunicorn como servidor WSGI
 
 ## 📝 Licencia
 
 Este proyecto está bajo la Licencia MIT.
 
-## 🤝 Contribución
+## 🤝 Contribuciones
 
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 📞 Soporte
-
-Si tienes problemas o preguntas:
-- Abre un issue en GitHub
-- Revisa la documentación de Django
-- Consulta la documentación de Render
+Las contribuciones son bienvenidas. Por favor, abre un issue o un pull request.
 
 ---
 
-**¡Disfruta organizando tus tareas! 🎯**
+¡Disfruta organizando tus tareas! 📝✨
